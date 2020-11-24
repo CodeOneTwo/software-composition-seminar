@@ -1,3 +1,5 @@
 # Code Repository for SCG
 
-[Fetch Repositories](./Fetch Repositories.ipynb)
+All the documentation is in the Jupyter notebook
+
+[Fetch Repositories Jupyter notebook](./Fetch%20Repositories.ipynb)
