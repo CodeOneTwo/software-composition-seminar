@@ -1,3 +1,3 @@
 # Code Repository for SCG
 
-[Fetch Repositories](./Fetch Repositories.ipynb)
+[Fetch Repositories](./Fetch\ Repositories.ipynb)
