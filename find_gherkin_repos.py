@@ -1,37 +1,68 @@
+
+import os
+from github import Github, RateLimitExceededException
+import pickle
 import logging
-import requests
+import traceback
+import datetime
+from time import sleep
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
-request = requests.get('https://api.github.com/search/repositories?q=stars:>500&sort=stars&order=desc')
+g = Github(os.environ['GITHUBTOKEN'])
+
+state = {
+    'counter': 0,
+    'wanted': {}
+}
+
+# Restore
+try:
+    with open('wanted.pickle', 'rb') as file:
+        state = pickle.load(file)
+except FileNotFoundError:
+    logger.info('no inital file')
+
+def handle_rate_limit():
+    reset_time = datetime.datetime.fromtimestamp(g.rate_limiting_resettime)
+    logger.warning(f'rate limit exceeded, continuing on {reset_time}')
+    while datetime.datetime.now() < reset_time:
+        sleep(2)
 
 
+repos = g.search_repositories(query='stars:>500', sort='stars', order='desc') # initial search
+# repos = g.search_repositories(query='stars:500..19995', sort='stars', order='desc')
 
-def get_next_link(link_header: str) -> str:
-    """ returns the link of the next page """
-    logging.info(f'header: {link_header}')
-    for url in link_header.split(', '):
-        logger.info(f'processing url: {url}')
-        if url.find("rel=\"next\"") != -1:
-            print('foooound it')
-            next_url = url
-            break
-    next_url = next_url.split(';')[0][1:-1]
-    logging.info(next_url)
-    return next_url
+try:
+    while repos.totalCount !=0:
+        last_repo = None
+        for repo in repos:
+            state['counter'] += 1
+            while True:
+                try:
+                    last_repo = repo
+                    repo_name = repo.name
+                    logger.info(f'process repo: {repo_name}')
+                    if ('Gherkin' in repo.get_languages().keys()):
+                        state['wanted'][state['counter']] = repo.full_name
+                        logger.info(f'found_repo: {repo_name}')
+                    break
+                except RateLimitExceededException:
+                    handle_rate_limit()
+                    traceback.print_exc()
+                except:
+                    raise
+        try:
+            repos = g.search_repositories(query=f'stars:500..{repo.stargazers_count}', sort='stars', order='desc')
+        except RateLimitExceededException:
+            handle_rate_limit()
+            traceback.print_exc()
+            repos = g.search_repositories(query=f'stars:500..{repo.stargazers_count}', sort='stars', order='desc')
+except:
+    with open(f'crash-{repo.name}.pickle', 'wb') as file:
+        pickle.dump(state, file)
 
-wanted = []
-while get_next_link(request.headers['link']) != -1:
-    results = request.json()
-    for repo in results['items']:
-        if 'Gherkin' in requests.get(results['items'][0]['languages_url']).json().keys():
-            logger.info(f'found repo: {repo.full_name}')
-            wanted.append(repo)
-
-    logger.info(wanted)
-    request = requests.get(get_next_link(request.headers['link']))
-
-
-print(f'End of request list: {request.headers["link"]}')
+with open('wanted.pickle', 'wb') as file:
+    pickle.dump(state, file)
 
