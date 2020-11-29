@@ -19,7 +19,7 @@ state = {
 
 # Restore
 try:
-    with open('wanted.pickle', 'rb') as file:
+    with open('data/wanted.pickle', 'rb') as file:
         state = pickle.load(file)
 except FileNotFoundError:
     logger.info('no inital file')
@@ -28,7 +28,7 @@ def handle_rate_limit():
     reset_time = datetime.datetime.fromtimestamp(g.rate_limiting_resettime)
     logger.warning(f'rate limit exceeded, continuing on {reset_time}')
     while datetime.datetime.now() < reset_time:
-        sleep(2)
+        sleep(20)
 
 
 repos = g.search_repositories(query='stars:>500', sort='stars', order='desc') # initial search
@@ -60,9 +60,9 @@ try:
             traceback.print_exc()
             repos = g.search_repositories(query=f'stars:500..{repo.stargazers_count}', sort='stars', order='desc')
 except:
-    with open(f'crash-{repo.name}.pickle', 'wb') as file:
+    with open(f'data/crash/{repo.name}.pickle', 'wb') as file:
         pickle.dump(state, file)
 
-with open('wanted.pickle', 'wb') as file:
+with open('data/wanted.pickle', 'wb') as file:
     pickle.dump(state, file)
 
