@@ -1,14 +1,84 @@
+import { themes } from 'mdx-deck'
 
-# What is BDD
+import angularIcon from './assets/angular.png'
+import githubIcon from './assets/github-mark.png'
+import unibeLogo from './assets/logo-unibe.svg'
+
+import PageNumber from './page-number'
+
+export const theme = {
+  ...themes.swiss,
+  ...themes.prism,
+  styles: {
+    ...themes.swiss.styles,
+    Footer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        img: {
+            width: 'auto',
+            height: '2rem'
+        }
+    }
+  }
+}
+
+
+<Head>
+
+  <title>Software Composition Seminar presentation</title>
+
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="twitter:site" content="@codeonetwo" />
+
+  <meta name="twitter:title" content="Software Composition Seminar" />
+
+  <meta name="twitter:description" content="A really great presentation" />
+
+  <meta name="twitter:image" content="https://example.com/card.png" />
+
+</Head>
+
+<Footer>
+
+<a href="https://github.com/codeonetwo" style={{ display: 'flex', alignItems: 'center'}}><img src={githubIcon} /><span>CodeOneTwo</span></a>
+
+Characteristics of Glue Code in BDD Tools
+
+<PageNumber></PageNumber>
+
+</Footer>
+
+import Layout from './layout'
+
+
+# Presentation
+
+## Jan Dietrich
+
+<img src={unibeLogo} style={{ height: '50vh'}}/>
+
+
+
+---
+
+<Layout>
+
+
+## What is BDD
 
 - Behavior-driven Development
 - Process of agile software
 - Extension of test-driven-development
     - first write test cases and then start feature implementation
 
+</Layout>
+
 ---
 
-# Tools
+<Layout>
+
+## Tools
 
 - Cucumber (★ 3.1k)
 - SpecFlow (★ 1.6k)
@@ -18,11 +88,13 @@
 - JDave (★ 40)
 - Easy B (★ 31)
 
+</Layout>
+
 ---
 
-# Cucumber
+## Cucumber
 
-```feature
+```gherkin
 @feature-homePage
 @homePage-homePage
 Feature: Home Page
@@ -43,7 +115,7 @@ Feature: Home Page
 
 ---
 
-# Problems it claims to solve
+## Problems it claims to solve
 
 - collaboration among developers, QA and non-technical or business participants
 - Provide natural-language
@@ -51,23 +123,53 @@ Feature: Home Page
 
 ---
 
-# Personal experience [greenmatch.ch](https://greenmatch.ch)
+## Personal experience [greenmatch.ch](https://greenmatch.ch)
 
 - Product Owner wanted to engage in writing test cases
 - Setup of Cucumber for Node.js ![angular](./angular.png)
 
 ---
 
-# Our research motivation
+<Layout>
+
+## Our research motivation
 
 - Overhead of 
 
+
+</Layout>
+
 ---
 
-# Gather Data
+
+## Gather Data
+
+
+### previous work
+
+- Predicting Co-Changes between Functionality Specifications and Source Code in Behavior Driven Development [Link](https://danielcalencar.github.io/papers/Aidan-etal_MSR_2019_BDD.pdf)
+- Demystifying the adoption of behavior-driven development in open source projects [Link](https://www.sciencedirect.com/science/article/abs/pii/S095058492030063X)
+
+**Problem**
+
+- Datasets unusable
 
 ---
 
-# What comes next
+## Gather Data approach
+
+Let's gather some data on our own
+
+- [Jupyter Notebook](https://github.com/CodeOneTwo/software-composition-seminar/blob/main/Documentation.ipynb) ![]()
+
+---
+
+# Characteristics
+
+---
+
+# Questions
+
+- 
 
 ---

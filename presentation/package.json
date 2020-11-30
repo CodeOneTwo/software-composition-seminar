@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-      "start": "mdx-deck presentation.mdx"
+      "start": "mdx-deck presentation.mdx",
+      "static": "cd static && python -m http.server 8001"
   },
   "author": "",
   "license": "ISC",
