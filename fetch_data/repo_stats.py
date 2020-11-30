@@ -1,4 +1,4 @@
-from decorators import retry
+from .decorators import retry
 
 @retry
 def get_commit_activities(repo):
@@ -8,7 +8,7 @@ def get_commit_activities(repo):
 @retry
 def date_of_last_commit(repo):
     last_commit = repo.get_commits()[0]
-    last_commit.last_modified
+    return last_commit.last_modified
 
 @retry
 def get_feature_files(repo, g):

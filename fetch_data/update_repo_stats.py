@@ -7,7 +7,8 @@ import traceback
 from time import sleep
 import datetime
 
-from repo_stats import get_last_year_commits
+from repo_stats import get_commit_activities, get_feature_files, get_languages, get_commits_with_given, date_of_last_commit, contains_cucumber, contains_given
+from decorators import retry
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -16,22 +17,9 @@ g = Github(os.environ['GITHUBTOKEN'])
 
 state = {}
 
-def retry(func, repo, retry=2):
-    error_list = []
-    for i in range(retry):
-        try:
-            return func(repo)
-        except RateLimitExceededException:
-            raise
-        except Exception as err:
-            traceback.print_exc()
-            logger.info(f'failed with repo: {repo.name} retrying ({i} of 9)')
-            error_list.append(err)
-    return error_list
-
 
 def load_state():
-    with open('data/retro_stats.pickle', 'rb') as file:
+    with open('data/repo_stats.pickle', 'rb') as file:
         state = pickle.load(file)
     return state
 
@@ -41,60 +29,44 @@ def save_to_file(name, state):
         pickle.dump(state, file)
 
 
-def handle_rate_limit():
-    reset_time = datetime.datetime.fromtimestamp(g.rate_limiting_resettime)
-    logger.warning(f'rate limit exceeded, continuing on {reset_time}')
-    while datetime.datetime.now() < reset_time:
-        sleep(20)
-
-
-def get_repo_info(repo_name):
-    while True:
-        try:
-            repo = g.get_repo(repo_name)
-            repo_data = {
-                "name": repo.name,
-                "url": repo.html_url,
-                "fork": repo.fork,
-                "num_forks": repo.forks_count,
-                "num_contributors": retry(
-                    lambda repo: repo.get_contributors().totalCount,
-                    repo
-                ),
-                "num_commits": retry(
-                    lambda repo: repo.get_commits().totalCount,
-                    repo
-                ),
-                "num_stars": repo.stargazers_count,
-                "num_watchers": repo.subscribers_count,
-                "commit_activities": retry(get_last_year_commits, repo),
-                "issues_closed": retry(
-                    lambda repo: repo.get_issues(state="closed").totalCount,
-                    repo
-                ),
-                "issues_all": retry(
-                    lambda repo: repo.get_issues(state="all").totalCount,
-                    repo
-                ),
-                "pull_requests_closed": retry(
-                    lambda repo: repo.get_pulls(state="closed").totalCount,
-                    repo
-                ),
-                "pull_requests_all": retry(
-                    lambda repo: repo.get_pulls(state="all").totalCount,
-                    repo
-                ),
-                "comments": retry(
-                    lambda repo: repo.get_comments().totalCount,
-                    repo
-                )
-            }
-        except RateLimitExceededException:
-            handle_rate_limit()
-            traceback.print_exc()
-        else:
-            break
-    return repo_data
+@retry
+def update_repo_info(repo_data):
+    repo = g.get_repo(repo_data['full_name'])
+    # repo_data["name"] = repo.name
+    # repo_data["full_name"] = repo.full_name
+    # repo_data["url"] = repo.html_url
+    # repo_data["fork"] = repo.fork
+    # repo_data["num_forks"] = repo.forks_count
+    # repo_data["num_contributors"] = retry(
+    #     lambda repo: repo.get_contributors().totalCount
+    # )(repo)
+    # repo_data["num_commits"] = retry(
+    #     lambda repo: repo.get_commits().totalCount
+    # )(repo)
+    # repo_data["num_stars"] = repo.stargazers_count
+    # repo_data["num_watchers"] = repo.subscribers_count
+    # repo_data["commit_activities"] = get_commit_activities(repo)
+    # repo_data["issues_closed"] = retry(
+    #     lambda repo: repo.get_issues(state="closed").totalCount
+    # )(repo)
+    # repo_data["issues_all"] = retry(
+    #     lambda repo: repo.get_issues(state="all").totalCount
+    # )(repo)
+    # repo_data["pull_requests_closed"] = retry(
+    #     lambda repo: repo.get_pulls(state="closed").totalCount
+    # )(repo)
+    # repo_data["pull_requests_all"] = retry(
+    #     lambda repo: repo.get_pulls(state="all").totalCount
+    # )(repo)
+    # repo_data["comments"] = retry(
+    #     lambda repo: repo.get_comments().totalCount
+    # )(repo)
+    # repo_data["languages"] = get_languages(repo)
+    repo_data["date_of_last_commit"] = date_of_last_commit(repo)
+    repo_data["commits_with_given"] = get_commits_with_given(repo, g)
+    repo_data["file_cucumber"] = contains_cucumber(repo, g)
+    repo_data["file_given"] = contains_given(repo, g)
+    repo_data["files_feature"] = get_feature_files(repo, g)
 
 
 def main():
@@ -103,8 +75,7 @@ def main():
     counter = 0
     for repo in state['repos']:
         logger.info(repo['full_name'])
-        repo_info = get_repo_info(repo['full_name'])
-        state['repos'].append(repo_info)
+        update_repo_info(repo)
         counter += 1
         if counter >= 10:
             counter = 0
@@ -124,5 +95,5 @@ if __name__ == "__main__":
         logger.info('state saved in data')
         raise
     else:
-        save_to_file('repo_stats', state)
+        save_to_file('updated_repo_stats', state)
 

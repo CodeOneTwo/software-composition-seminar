@@ -57,10 +57,10 @@ def get_repo_info(repo_name):
         "comments": retry(lambda repo: repo.get_comments().totalCount)(repo),
         "languages": get_languages(repo),
         "date_of_last_commit": date_of_last_commit(repo),
-        "commits_with_given": get_commits_with_given(repo, g),
-        "file_cucumber": contains_cucumber(repo, g),
-        "file_given": contains_given(repo, g),
-        "files_feature": get_feature_files(repo, g),
+        # "commits_with_given": get_commits_with_given(repo, g),
+        # "file_cucumber": contains_cucumber(repo, g),
+        # "file_given": contains_given(repo, g),
+        # "files_feature": get_feature_files(repo, g),
     }
     return repo_data
 

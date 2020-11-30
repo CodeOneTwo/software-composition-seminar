@@ -32,6 +32,7 @@ def retry(func, retry=2):
 def handle_rate_limit():
     reset_time = datetime.datetime.fromtimestamp(g.rate_limiting_resettime)
     logger.warning(f'rate limit exceeded, continuing on {reset_time}')
+    logger.warning(f'now is {datetime.datetime.now()}')
     while datetime.datetime.now() < reset_time:
         sleep(20)
 
