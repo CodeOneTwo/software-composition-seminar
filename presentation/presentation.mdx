@@ -6,17 +6,30 @@ import unibeLogo from './assets/logo-unibe.svg'
 
 import PageNumber from './page-number'
 
+import FooterContainer from './footer-container'
+import Indicator from './page-indicator'
+
 export const theme = {
   ...themes.swiss,
   ...themes.prism,
+  html: {
+    fontSize: '120%'
+  },
   styles: {
     ...themes.swiss.styles,
     Footer: {
+        fontSize: '1rem',
+        img: {
+            width: 'auto',
+            height: '3rem'
+        }
+    },
+    Header: {
         display: 'flex',
         justifyContent: 'space-between',
         img: {
             width: 'auto',
-            height: '2rem'
+            height: '8rem'
         }
     }
   }
@@ -35,11 +48,24 @@ export const theme = {
 
   <meta name="twitter:description" content="A really great presentation" />
 
-  <meta name="twitter:image" content="https://example.com/card.png" />
+  <meta name="twitter:image" content={unibeLogo} />
 
 </Head>
 
+<Header>
+
+Software Composition Seminar
+
+<p><Indicator></Indicator></p>
+
+<img src={ unibeLogo } />
+
+</Header>
+
 <Footer>
+
+
+<FooterContainer>
 
 <a href="https://github.com/codeonetwo" style={{ display: 'flex', alignItems: 'center'}}><img src={githubIcon} /><span>CodeOneTwo</span></a>
 
@@ -47,52 +73,72 @@ Characteristics of Glue Code in BDD Tools
 
 <PageNumber></PageNumber>
 
+</FooterContainer>
+
 </Footer>
 
-import Layout from './layout'
 
 
-# Presentation
 
-## Jan Dietrich
+Jan Dietrich
 
-<img src={unibeLogo} style={{ height: '50vh'}}/>
+# Characteristics of Glue Code in BDD Tools
 
+
+Supervisor: Nitish Patkar
 
 
 ---
 
-<Layout>
-
-
-## What is BDD
+# What is BDD
 
 - Behavior-driven Development
 - Process of agile software
 - Extension of test-driven-development
     - first write test cases and then start feature implementation
 
-</Layout>
+
+<Notes>
+
+- BDD stands for behavior driven development
+
+- is a process of agile software development
+
+</Notes>
 
 ---
 
-<Layout>
 
-## Tools
+# Problems it claims to solve
+
+- collaboration among developers and non-technical business participants
+
+- Provide natural-language
+
+- Formalize a shared understanding of how the application works
+
+---
+
+# Tools
 
 - Cucumber (★ 3.1k)
+
 - SpecFlow (★ 1.6k)
+
 - FitNesse (★ 1.6k)
+
 - JBehave (★ 248)
+
 - Concordion (★ 192)
+
 - JDave (★ 40)
+
 - Easy B (★ 31)
 
-</Layout>
 
 ---
 
-## Cucumber
+# Cucumber
 
 ```gherkin
 @feature-homePage
@@ -115,34 +161,16 @@ Feature: Home Page
 
 ---
 
-## Problems it claims to solve
-
-- collaboration among developers, QA and non-technical or business participants
-- Provide natural-language
-- Formalize a shared understanding of how the application works
-
----
-
-## Personal experience [greenmatch.ch](https://greenmatch.ch)
-
-- Product Owner wanted to engage in writing test cases
-- Setup of Cucumber for Node.js ![angular](./angular.png)
-
----
-
-<Layout>
-
-## Our research motivation
+# Our research motivation
 
 - Overhead of 
 
-
-</Layout>
+side note: Personal experience at work place [greenmatch.ch](https://greenmatch.ch)
 
 ---
 
 
-## Gather Data
+# Gather Data
 
 
 ### previous work
@@ -156,15 +184,25 @@ Feature: Home Page
 
 ---
 
-## Gather Data approach
+# Gather Data with GitHub API
 
 Let's gather some data on our own
 
-- [Jupyter Notebook](https://github.com/CodeOneTwo/software-composition-seminar/blob/main/Documentation.ipynb) ![]()
+- [Jupyter Notebook](https://github.com/CodeOneTwo/software-composition-seminar/blob/main/Documentation.ipynb) <img src={githubIcon} style={{height: '2rem', width: 'auto'}}/>
 
 ---
 
 # Characteristics
+
+- Number of spec files
+- Number of glue code files
+- Number of BDD related commits 
+    - feature files
+    - fixture files
+- Lines of Code
+    - auto-generated
+    - hand-written
+
 
 ---
 
