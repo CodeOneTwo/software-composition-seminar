@@ -7,7 +7,7 @@ const getDotColor = (i, currentSlideIndex) => {
     width: '1rem',
     height: '1rem',
     marginRight: '0.1rem',
-    backgroundColor: i === currentSlideIndex ? 'grey' : '#9eafb1'
+    backgroundColor: i === currentSlideIndex ? '#100604' : '#9eafb1'
   };
 }
 

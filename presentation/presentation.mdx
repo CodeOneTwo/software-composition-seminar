@@ -12,11 +12,11 @@ import Indicator from './page-indicator'
 export const theme = {
   ...themes.swiss,
   ...themes.prism,
-  html: {
-    fontSize: '120%'
-  },
   styles: {
     ...themes.swiss.styles,
+    code: {
+      fontSize: '1.2rem'
+    },
     Footer: {
         fontSize: '1rem',
         img: {
@@ -90,13 +90,19 @@ Supervisor: Nitish Patkar
 
 ---
 
-# What is BDD
+# What is BDD?
 
 - Behavior-driven Development
+
 - Process of agile software
+
 - Extension of test-driven-development
+
     - first write test cases and then start feature implementation
 
+- Involves non-technical business participants in the development process
+
+- Uses a domain specific language (DSL)
 
 <Notes>
 
@@ -109,17 +115,39 @@ Supervisor: Nitish Patkar
 ---
 
 
-# Problems it claims to solve
+# Problems BDD claims to solve
 
-- collaboration among developers and non-technical business participants
+BDD provides...
 
-- Provide natural-language
+- a natural language to write test cases
 
-- Formalize a shared understanding of how the application works
+    - with a parseable DSL
+
+    - convertable to executable tests
+
+- a shared language among developers and business participants to ...
+
+    - have the same understanding of how the application should behave
+
+    - collaborate in writing unit and acceptance tests
+
+
 
 ---
 
-# Tools
+# Research motivation
+
+- Costs of Glue Code vs. Benefits of a shared convertable language
+
+    - if the amount of necessary glue code > benefits of BDD
+
+    → not worth adapting BDD into the agile software development process
+
+_side note: Personal experience at work place [greenmatch.ch](https://greenmatch.ch)_
+
+---
+
+# BDD-Tools
 
 - Cucumber (★ 3.1k)
 
@@ -138,22 +166,29 @@ Supervisor: Nitish Patkar
 
 ---
 
-# Cucumber
+# Example: Cucumber
+
+from the repository `influxdata/influxdb`:
+
+example of a `.feature` file:
 
 ```gherkin
-@feature-homePage
-@homePage-homePage
-Feature: Home Page
+@feature-dashboards
+@dashboards-dashboards
+Feature: Dashboards - Base
+  As a user I want to Read Create Update and Delete Dashboards
+  So that I can organize my data in Influxdbv2
 
-  Scenario: logout home page
-    Given I reset the environment
-    Given run setup over REST "DEFAULT"
-    When open the signin page
-    When UI sign in user "DEFAULT"
-    When open page "HOME" for user "DEFAULT"
-    When click logout from the home page
-    Then the sign in page is loaded
+  Scenario: Create new dashboard
+    When click the empty Create dashboard dropdown button
+    Then the empty create dashboard dropdown list contains
+    When click the create dashboard item "New Dashboard"
+    Then the new dashboard page is loaded
+    When click nav menu item "Dashboards"
+    Then the empty Create dashboard dropdown button is not present
+    Then there is a dashboard card named "Name this Dashboard"
 ```
+
 
 <Notes>
 
@@ -161,26 +196,64 @@ Feature: Home Page
 
 ---
 
-# Our research motivation
+# Example: Cucumber
 
-- Overhead of 
+step definitions:
 
-side note: Personal experience at work place [greenmatch.ch](https://greenmatch.ch)
+[steps/dashboards/dashboardsSteps.js](https://github.com/influxdata/influxdb/blob/ead9e17747f2250f698219a3e7c72b7fb8767c0d/e2e/src/steps/dashboards/dashboardsSteps.js#L35)
+
+```javascript
+When(/^click the empty Create dashboard dropdown button$/, async () => {
+    await dbdsSteps.clickCreateDashboardEmpty();
+});
+```
+
+[step_definitions/dashboards/dashboardsStepDefs.js](https://github.com/influxdata/influxdb/blob/ead9e17747f2250f698219a3e7c72b7fb8767c0d/e2e/src/step_definitions/dashboards/dashboardsStepDefs.js#L20)
+
+```javascript
+async clickCreateDashboardEmpty(){
+    await this.clickAndWait(await this.dbdsPage.getCreateDashboardDropdownEmpty());
+}
+```
+
+
+<Notes>
+
+</Notes>
+
 
 ---
 
 
-# Gather Data
-
-
-### previous work
+# Gather Data from previous work
 
 - Predicting Co-Changes between Functionality Specifications and Source Code in Behavior Driven Development [Link](https://danielcalencar.github.io/papers/Aidan-etal_MSR_2019_BDD.pdf)
+
 - Demystifying the adoption of behavior-driven development in open source projects [Link](https://www.sciencedirect.com/science/article/abs/pii/S095058492030063X)
 
-**Problem**
+#### Problem
 
-- Datasets unusable
+- public Datasets unusable
+
+    → only processed data
+
+- contacted multiple authors for data set
+
+    → to date no dataset received
+
+<Notes>
+
+- First paper researched the changes in feature files and changes in source code files
+
+- Second paper analyses 
+
+    - which BDD tools in 50'000 open source projects
+
+    - changes of feature and source code on 50 ruby projects
+
+    - survey 31 developers on how they use bdd tools
+
+</Notes>
 
 ---
 
@@ -195,19 +268,40 @@ Let's gather some data on our own
 # Characteristics
 
 - Number of spec files
+
 - Number of glue code files
+
 - Number of BDD related commits 
+
     - feature files
+
     - fixture files
+
 - Lines of Code
+
     - auto-generated
+
     - hand-written
 
 
 ---
 
-# Questions
+# Questions?
 
-- 
+---
+
+# tools and sources
+
+- `mdx-deck` - for the presentation ([GitHub](https://github.com/jxnblk/mdx-deck) <img src={githubIcon} style={{height: '2rem', width: 'auto'}}/> )
+
+- `jupyter notebook` - for the documentation ([Jupyter Notebook](https://jupyter.org/)
+
+- `PyGithub` - library to query GitHub API ([Jupyter Notebook](https://jupyter.org/)
+
+→ You can find everything on GitHub:
+
+- [Link](https://github.com/CodeOneTwo/software-composition-seminar/tree/main/presentation/public) to the presentation
+
+- [Link](https://github.com/CodeOneTwo/software-composition-seminar/blob/main/Documentation.ipynb) to Jupyter Notebook Documentation
 
 ---

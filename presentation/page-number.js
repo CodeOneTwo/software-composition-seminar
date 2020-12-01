@@ -6,7 +6,7 @@ const PageNumber = () => {
 
   const currentSlide = state.index + 1; // The slides are zero-index
   return (
-      <p style={{ fontWeight: 'bold', fontSize: '1.8em' }}>{currentSlide}</p>
+      <p style={{ fontWeight: 'bold', fontSize: '1.8em', marginRight: '1.5rem' }}>{currentSlide}</p>
   );
 };
 
